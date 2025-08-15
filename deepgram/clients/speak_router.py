@@ -124,27 +124,26 @@ class SpeakRouter:
             type = ""
             file_name = ""
             class_name = ""
-            match self._parent:
-                case "websocket":
-                    type = "websocket"
-                    file_name = "client"
-                    class_name = "SpeakWebSocketClient"
-                case "asyncwebsocket":
-                    type = "websocket"
-                    file_name = "async_client"
-                    class_name = "AsyncSpeakWebSocketClient"
-                case "rest":
-                    type = "rest"
-                    file_name = "client"
-                    class_name = "SpeakRESTClient"
-                case "asyncrest":
-                    type = "rest"
-                    file_name = "async_client"
-                    class_name = "AsyncSpeakRESTClient"
-                case _:
-                    self._logger.error("parent unknown: %s", self._parent)
-                    self._logger.debug("Version.v LEAVE")
-                    raise DeepgramModuleError("Invalid parent type")
+            if self._parent == "websocket":
+                type = "websocket"
+                file_name = "client"
+                class_name = "SpeakWebSocketClient"
+            elif self._parent == "asyncwebsocket":
+                type = "websocket"
+                file_name = "async_client"
+                class_name = "AsyncSpeakWebSocketClient"
+            elif self._parent == "rest":
+                type = "rest"
+                file_name = "client"
+                class_name = "SpeakRESTClient"
+            elif self._parent == "asyncrest":
+                type = "rest"
+                file_name = "async_client"
+                class_name = "AsyncSpeakRESTClient"
+            else:
+                self._logger.error("parent unknown: %s", self._parent)
+                self._logger.debug("Version.v LEAVE")
+                raise DeepgramModuleError("Invalid parent type")
 
             # create class path
             path = f"deepgram.clients.speak.v{version}.{type}.{file_name}"

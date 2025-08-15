@@ -91,19 +91,18 @@ class AgentRouter:
             parent = ""
             file_name = ""
             class_name = ""
-            match self._parent:
-                case "websocket":
-                    parent = "websocket"
-                    file_name = "client"
-                    class_name = "AgentWebSocketClient"
-                case "asyncwebsocket":
-                    parent = "websocket"
-                    file_name = "async_client"
-                    class_name = "AsyncAgentWebSocketClient"
-                case _:
-                    self._logger.error("parent unknown: %s", self._parent)
-                    self._logger.debug("Version.v LEAVE")
-                    raise DeepgramModuleError("Invalid parent type")
+            if self._parent == "websocket":
+                parent = "websocket"
+                file_name = "client"
+                class_name = "AgentWebSocketClient"
+            elif self._parent == "asyncwebsocket":
+                parent = "websocket"
+                file_name = "async_client"
+                class_name = "AsyncAgentWebSocketClient"
+            else:
+                self._logger.error("parent unknown: %s", self._parent)
+                self._logger.debug("Version.v LEAVE")
+                raise DeepgramModuleError("Invalid parent type")
 
             # create class path
             path = f"deepgram.clients.agent.v{version}.{parent}.{file_name}"

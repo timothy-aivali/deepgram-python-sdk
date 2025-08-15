@@ -641,37 +641,36 @@ class DeepgramClient:
             parent = ""
             filename = ""
             classname = ""
-            match self._parent:
-                case "manage":
-                    parent = "manage"
-                    filename = "client"
-                    classname = "ManageClient"
-                case "asyncmanage":
-                    parent = "manage"
-                    filename = "async_client"
-                    classname = "AsyncManageClient"
-                case "asyncspeak":
-                    return AsyncSpeakRESTClient(self._config)
-                case "selfhosted":
-                    parent = "selfhosted"
-                    filename = "client"
-                    classname = "SelfHostedClient"
-                case "asyncselfhosted":
-                    parent = "selfhosted"
-                    filename = "async_client"
-                    classname = "AsyncSelfHostedClient"
-                case "auth":
-                    parent = "auth"
-                    filename = "client"
-                    classname = "AuthRESTClient"
-                case "asyncauth":
-                    parent = "auth"
-                    filename = "async_client"
-                    classname = "AsyncAuthRESTClient"
-                case _:
-                    self._logger.error("parent unknown: %s", self._parent)
-                    self._logger.debug("Version.v LEAVE")
-                    raise DeepgramModuleError("Invalid parent type")
+            if self._parent == "manage":
+                parent = "manage"
+                filename = "client"
+                classname = "ManageClient"
+            elif self._parent == "asyncmanage":
+                parent = "manage"
+                filename = "async_client"
+                classname = "AsyncManageClient"
+            elif self._parent == "asyncspeak":
+                return AsyncSpeakRESTClient(self._config)
+            elif self._parent == "selfhosted":
+                parent = "selfhosted"
+                filename = "client"
+                classname = "SelfHostedClient"
+            elif self._parent == "asyncselfhosted":
+                parent = "selfhosted"
+                filename = "async_client"
+                classname = "AsyncSelfHostedClient"
+            elif self._parent == "auth":
+                parent = "auth"
+                filename = "client"
+                classname = "AuthRESTClient"
+            elif self._parent == "asyncauth":
+                parent = "auth"
+                filename = "async_client"
+                classname = "AsyncAuthRESTClient"
+            else:
+                self._logger.error("parent unknown: %s", self._parent)
+                self._logger.debug("Version.v LEAVE")
+                raise DeepgramModuleError("Invalid parent type")
 
             # create class path
             path = f"deepgram.clients.{parent}.v{version}.{filename}"

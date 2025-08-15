@@ -292,87 +292,86 @@ class AsyncSpeakWSClient(
             response_type = data.get("type")
             self._logger.debug("response_type: %s, data: %s", response_type, data)
 
-            match response_type:
-                case SpeakWebSocketEvents.Open:
-                    open_result: OpenResponse = OpenResponse.from_json(message)
-                    self._logger.verbose("OpenResponse: %s", open_result)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Open),
-                        open=open_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Metadata:
-                    meta_result: MetadataResponse = MetadataResponse.from_json(message)
-                    self._logger.verbose("MetadataResponse: %s", meta_result)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Metadata),
-                        metadata=meta_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Flushed:
-                    fl_result: FlushedResponse = FlushedResponse.from_json(message)
-                    self._logger.verbose("FlushedResponse: %s", fl_result)
+            if response_type == SpeakWebSocketEvents.Open:
+                open_result: OpenResponse = OpenResponse.from_json(message)
+                self._logger.verbose("OpenResponse: %s", open_result)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Open),
+                    open=open_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Metadata:
+                meta_result: MetadataResponse = MetadataResponse.from_json(message)
+                self._logger.verbose("MetadataResponse: %s", meta_result)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Metadata),
+                    metadata=meta_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Flushed:
+                fl_result: FlushedResponse = FlushedResponse.from_json(message)
+                self._logger.verbose("FlushedResponse: %s", fl_result)
 
-                    # auto flush
-                    if self._config.is_inspecting_speak():
-                        self._flush_count -= 1
-                        self._logger.debug(
-                            "Decrement AutoFlush count: %d",
-                            self._flush_count,
-                        )
+                # auto flush
+                if self._config.is_inspecting_speak():
+                    self._flush_count -= 1
+                    self._logger.debug(
+                        "Decrement AutoFlush count: %d",
+                        self._flush_count,
+                    )
 
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Flushed),
-                        flushed=fl_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Cleared:
-                    clear_result: ClearedResponse = ClearedResponse.from_json(message)
-                    self._logger.verbose("ClearedResponse: %s", clear_result)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Cleared),
-                        cleared=clear_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Close:
-                    close_result: CloseResponse = CloseResponse.from_json(message)
-                    self._logger.verbose("CloseResponse: %s", close_result)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Close),
-                        close=close_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Warning:
-                    war_warning: WarningResponse = WarningResponse.from_json(message)
-                    self._logger.verbose("WarningResponse: %s", war_warning)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Warning),
-                        warning=war_warning,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case SpeakWebSocketEvents.Error:
-                    err_error: ErrorResponse = ErrorResponse.from_json(message)
-                    self._logger.verbose("ErrorResponse: %s", err_error)
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Error),
-                        error=err_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case _:
-                    self._logger.warning(
-                        "Unknown Message: response_type: %s, data: %s",
-                        response_type,
-                        data,
-                    )
-                    unhandled_error: UnhandledResponse = UnhandledResponse(
-                        type=SpeakWebSocketEvents(SpeakWebSocketEvents.Unhandled),
-                        raw=str(message),
-                    )
-                    await self._emit(
-                        SpeakWebSocketEvents(SpeakWebSocketEvents.Unhandled),
-                        unhandled=unhandled_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Flushed),
+                    flushed=fl_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Cleared:
+                clear_result: ClearedResponse = ClearedResponse.from_json(message)
+                self._logger.verbose("ClearedResponse: %s", clear_result)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Cleared),
+                    cleared=clear_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Close:
+                close_result: CloseResponse = CloseResponse.from_json(message)
+                self._logger.verbose("CloseResponse: %s", close_result)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Close),
+                    close=close_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Warning:
+                war_warning: WarningResponse = WarningResponse.from_json(message)
+                self._logger.verbose("WarningResponse: %s", war_warning)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Warning),
+                    warning=war_warning,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type==SpeakWebSocketEvents.Error:
+                err_error: ErrorResponse = ErrorResponse.from_json(message)
+                self._logger.verbose("ErrorResponse: %s", err_error)
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Error),
+                    error=err_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            else:
+                self._logger.warning(
+                    "Unknown Message: response_type: %s, data: %s",
+                    response_type,
+                    data,
+                )
+                unhandled_error: UnhandledResponse = UnhandledResponse(
+                    type=SpeakWebSocketEvents(SpeakWebSocketEvents.Unhandled),
+                    raw=str(message),
+                )
+                await self._emit(
+                    SpeakWebSocketEvents(SpeakWebSocketEvents.Unhandled),
+                    unhandled=unhandled_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
 
             self._logger.notice("_process_text Succeeded")
             self._logger.debug("AsyncSpeakWebSocketClient._process_text LEAVE")
@@ -540,17 +539,16 @@ class AsyncSpeakWSClient(
                     self._logger.debug(
                         "Inspecting Message: Sending %s", _tmp_json["type"]
                     )
-                    match _tmp_json["type"]:
-                        case SpeakWebSocketMessage.Speak:
-                            inspect_res = await self._inspect()
-                            if not inspect_res:
-                                self._logger.error("inspect_res failed")
-                        case SpeakWebSocketMessage.Flush:
-                            self._last_datagram = None
-                            self._flush_count += 1
-                            self._logger.debug(
-                                "Increment Flush count: %d", self._flush_count
-                            )
+                    if _tmp_json["type"] == SpeakWebSocketMessage.Speak:
+                        inspect_res = await self._inspect()
+                        if not inspect_res:
+                            self._logger.error("inspect_res failed")
+                    elif _tmp_json["type"] == SpeakWebSocketMessage.Flush:
+                        self._last_datagram = None
+                        self._flush_count += 1
+                        self._logger.debug(
+                            "Increment Flush count: %d", self._flush_count
+                        )
             except Exception as e:  # pylint: disable=broad-except
                 self._logger.error("send_raw() failed - Exception: %s", str(e))
 

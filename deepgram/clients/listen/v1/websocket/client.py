@@ -251,91 +251,90 @@ class ListenWebSocketClient(
             response_type = data.get("type")
             self._logger.debug("response_type: %s, data: %s", response_type, data)
 
-            match response_type:
-                case LiveTranscriptionEvents.Open:
-                    open_result: OpenResponse = OpenResponse.from_json(message)
-                    self._logger.verbose("OpenResponse: %s", open_result)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Open),
-                        open=open_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.Transcript:
-                    msg_result: LiveResultResponse = LiveResultResponse.from_json(
-                        message
-                    )
-                    self._logger.verbose("LiveResultResponse: %s", msg_result)
+            if response_type == LiveTranscriptionEvents.Open:
+                open_result: OpenResponse = OpenResponse.from_json(message)
+                self._logger.verbose("OpenResponse: %s", open_result)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Open),
+                    open=open_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.Transcript:
+                msg_result: LiveResultResponse = LiveResultResponse.from_json(
+                    message
+                )
+                self._logger.verbose("LiveResultResponse: %s", msg_result)
 
-                    #  auto flush
-                    if self._config.is_inspecting_listen():
-                        inspect_res = self._inspect(msg_result)
-                        if not inspect_res:
-                            self._logger.error("inspect_res failed")
+                #  auto flush
+                if self._config.is_inspecting_listen():
+                    inspect_res = self._inspect(msg_result)
+                    if not inspect_res:
+                        self._logger.error("inspect_res failed")
 
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Transcript),
-                        result=msg_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.Metadata:
-                    meta_result: MetadataResponse = MetadataResponse.from_json(message)
-                    self._logger.verbose("MetadataResponse: %s", meta_result)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Metadata),
-                        metadata=meta_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.SpeechStarted:
-                    ss_result: SpeechStartedResponse = SpeechStartedResponse.from_json(
-                        message
-                    )
-                    self._logger.verbose("SpeechStartedResponse: %s", ss_result)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.SpeechStarted),
-                        speech_started=ss_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.UtteranceEnd:
-                    ue_result: UtteranceEndResponse = UtteranceEndResponse.from_json(
-                        message
-                    )
-                    self._logger.verbose("UtteranceEndResponse: %s", ue_result)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.UtteranceEnd),
-                        utterance_end=ue_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.Close:
-                    close_result: CloseResponse = CloseResponse.from_json(message)
-                    self._logger.verbose("CloseResponse: %s", close_result)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Close),
-                        close=close_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case LiveTranscriptionEvents.Error:
-                    err_error: ErrorResponse = ErrorResponse.from_json(message)
-                    self._logger.verbose("ErrorResponse: %s", err_error)
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Error),
-                        error=err_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case _:
-                    self._logger.warning(
-                        "Unknown Message: response_type: %s, data: %s",
-                        response_type,
-                        data,
-                    )
-                    unhandled_error: UnhandledResponse = UnhandledResponse(
-                        type=LiveTranscriptionEvents(LiveTranscriptionEvents.Unhandled),
-                        raw=message,
-                    )
-                    self._emit(
-                        LiveTranscriptionEvents(LiveTranscriptionEvents.Unhandled),
-                        unhandled=unhandled_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Transcript),
+                    result=msg_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.Metadata:
+                meta_result: MetadataResponse = MetadataResponse.from_json(message)
+                self._logger.verbose("MetadataResponse: %s", meta_result)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Metadata),
+                    metadata=meta_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.SpeechStarted:
+                ss_result: SpeechStartedResponse = SpeechStartedResponse.from_json(
+                    message
+                )
+                self._logger.verbose("SpeechStartedResponse: %s", ss_result)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.SpeechStarted),
+                    speech_started=ss_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.UtteranceEnd:
+                ue_result: UtteranceEndResponse = UtteranceEndResponse.from_json(
+                    message
+                )
+                self._logger.verbose("UtteranceEndResponse: %s", ue_result)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.UtteranceEnd),
+                    utterance_end=ue_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.Close:
+                close_result: CloseResponse = CloseResponse.from_json(message)
+                self._logger.verbose("CloseResponse: %s", close_result)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Close),
+                    close=close_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == LiveTranscriptionEvents.Error:
+                err_error: ErrorResponse = ErrorResponse.from_json(message)
+                self._logger.verbose("ErrorResponse: %s", err_error)
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Error),
+                    error=err_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            else:
+                self._logger.warning(
+                    "Unknown Message: response_type: %s, data: %s",
+                    response_type,
+                    data,
+                )
+                unhandled_error: UnhandledResponse = UnhandledResponse(
+                    type=LiveTranscriptionEvents(LiveTranscriptionEvents.Unhandled),
+                    raw=message,
+                )
+                self._emit(
+                    LiveTranscriptionEvents(LiveTranscriptionEvents.Unhandled),
+                    unhandled=unhandled_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
 
             self._logger.notice("_process_text Succeeded")
             self._logger.debug("SpeakStreamClient._process_text LEAVE")
