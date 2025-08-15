@@ -91,19 +91,18 @@ class ReadRouter:
             parent = ""
             file_name = ""
             class_name = ""
-            match self._parent:
-                case "analyze":
-                    parent = "analyze"
-                    file_name = "client"
-                    class_name = "AnalyzeClient"
-                case "asyncanalyze":
-                    parent = "analyze"
-                    file_name = "async_client"
-                    class_name = "AsyncAnalyzeClient"
-                case _:
-                    self._logger.error("parent unknown: %s", self._parent)
-                    self._logger.debug("Version.v LEAVE")
-                    raise DeepgramModuleError("Invalid parent type")
+            if self._parent == "analyze":
+                parent = "analyze"
+                file_name = "client"
+                class_name = "AnalyzeClient"
+            elif self._parent == "asyncanalyze":
+                parent = "analyze"
+                file_name = "async_client"
+                class_name = "AsyncAnalyzeClient"
+            else:
+                self._logger.error("parent unknown: %s", self._parent)
+                self._logger.debug("Version.v LEAVE")
+                raise DeepgramModuleError("Invalid parent type")
 
             # create class path
             path = f"deepgram.clients.{parent}.v{version}.{file_name}"

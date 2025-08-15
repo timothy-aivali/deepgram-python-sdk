@@ -1,5 +1,7 @@
 # Deepgram Python SDK
 
+Forked for python 3.8 port
+
 [![Discord](https://dcbadge.vercel.app/api/server/xWRaCDBtW4?style=flat)](https://discord.gg/xWRaCDBtW4) [![CI](https://img.shields.io/github/actions/workflow/status/deepgram/deepgram-python-sdk/CI.yaml?branch=main)](https://github.com/deepgram/deepgram-python-sdk/actions/workflows/CI.yaml?branch=main) [![PyPI](https://img.shields.io/pypi/v/deepgram-sdk)](https://pypi.org/project/deepgram-sdk/)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg?style=flat-rounded)](./.github/CODE_OF_CONDUCT.md)
 

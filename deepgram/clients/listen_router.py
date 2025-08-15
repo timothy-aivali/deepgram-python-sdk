@@ -170,35 +170,34 @@ class ListenRouter:
             protocol = ""
             file_name = ""
             class_name = ""
-            match self._parent:
-                case "live":
-                    return LiveClient(self._config)
-                case "asynclive":
-                    return AsyncLiveClient(self._config)
-                case "prerecorded":
-                    return PreRecordedClient(self._config)
-                case "asyncprerecorded":
-                    return AsyncPreRecordedClient(self._config)
-                case "websocket":
-                    protocol = "websocket"
-                    file_name = "client"
-                    class_name = "ListenWebSocketClient"
-                case "asyncwebsocket":
-                    protocol = "websocket"
-                    file_name = "async_client"
-                    class_name = "AsyncListenWebSocketClient"
-                case "rest":
-                    protocol = "rest"
-                    file_name = "client"
-                    class_name = "ListenRESTClient"
-                case "asyncrest":
-                    protocol = "rest"
-                    file_name = "async_client"
-                    class_name = "AsyncListenRESTClient"
-                case _:
-                    self._logger.error("parent unknown: %s", self._parent)
-                    self._logger.debug("Version.v LEAVE")
-                    raise DeepgramModuleError("Invalid parent type")
+            if self._parent == "live":
+                return LiveClient(self._config)
+            elif self._parent == "asynclive":
+                return AsyncLiveClient(self._config)
+            elif self._parent == "prerecorded":
+                return PreRecordedClient(self._config)
+            elif self._parent == "asyncprerecorded":
+                return AsyncPreRecordedClient(self._config)
+            elif self._parent == "websocket":
+                protocol = "websocket"
+                file_name = "client"
+                class_name = "ListenWebSocketClient"
+            elif self._parent == "asyncwebsocket":
+                protocol = "websocket"
+                file_name = "async_client"
+                class_name = "AsyncListenWebSocketClient"
+            elif self._parent == "rest":
+                protocol = "rest"
+                file_name = "client"
+                class_name = "ListenRESTClient"
+            elif self._parent == "asyncrest":
+                protocol = "rest"
+                file_name = "async_client"
+                class_name = "AsyncListenRESTClient"
+            else:
+                self._logger.error("parent unknown: %s", self._parent)
+                self._logger.debug("Version.v LEAVE")
+                raise DeepgramModuleError("Invalid parent type")
 
             # create class path
             path = f"deepgram.clients.listen.v{version}.{protocol}.{file_name}"

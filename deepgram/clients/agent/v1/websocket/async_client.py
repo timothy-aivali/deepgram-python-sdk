@@ -364,151 +364,150 @@ class AsyncAgentWebSocketClient(
             response_type = data.get("type")
             self._logger.debug("response_type: %s, data: %s", response_type, data)
 
-            match response_type:
-                case AgentWebSocketEvents.Open:
-                    open_result: OpenResponse = OpenResponse.from_json(message)
-                    self._logger.verbose("OpenResponse: %s", open_result)
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.Open),
-                        open=open_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.Welcome:
-                    welcome_result: WelcomeResponse = WelcomeResponse.from_json(message)
-                    self._logger.verbose("WelcomeResponse: %s", welcome_result)
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.Welcome),
-                        welcome=welcome_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.SettingsApplied:
-                    settings_applied_result: SettingsAppliedResponse = (
-                        SettingsAppliedResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "SettingsAppliedResponse: %s", settings_applied_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.SettingsApplied),
-                        settings_applied=settings_applied_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.ConversationText:
-                    conversation_text_result: ConversationTextResponse = (
-                        ConversationTextResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "ConversationTextResponse: %s", conversation_text_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.ConversationText),
-                        conversation_text=conversation_text_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.UserStartedSpeaking:
-                    user_started_speaking_result: UserStartedSpeakingResponse = (
-                        UserStartedSpeakingResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "UserStartedSpeakingResponse: %s", user_started_speaking_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.UserStartedSpeaking),
-                        user_started_speaking=user_started_speaking_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.AgentThinking:
-                    agent_thinking_result: AgentThinkingResponse = (
-                        AgentThinkingResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "AgentThinkingResponse: %s", agent_thinking_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.AgentThinking),
-                        agent_thinking=agent_thinking_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.FunctionCallRequest:
-                    function_call_request_result: FunctionCallRequest = (
-                        FunctionCallRequest.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "FunctionCallRequest: %s", function_call_request_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.FunctionCallRequest),
-                        function_call_request=function_call_request_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.AgentStartedSpeaking:
-                    agent_started_speaking_result: AgentStartedSpeakingResponse = (
-                        AgentStartedSpeakingResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "AgentStartedSpeakingResponse: %s",
-                        agent_started_speaking_result,
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.AgentStartedSpeaking),
-                        agent_started_speaking=agent_started_speaking_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.AgentAudioDone:
-                    agent_audio_done_result: AgentAudioDoneResponse = (
-                        AgentAudioDoneResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "AgentAudioDoneResponse: %s", agent_audio_done_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.AgentAudioDone),
-                        agent_audio_done=agent_audio_done_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.InjectionRefused:
-                    injection_refused_result: InjectionRefusedResponse = (
-                        InjectionRefusedResponse.from_json(message)
-                    )
-                    self._logger.verbose(
-                        "InjectionRefused: %s", injection_refused_result
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.InjectionRefused),
-                        injection_refused=injection_refused_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.Close:
-                    close_result: CloseResponse = CloseResponse.from_json(message)
-                    self._logger.verbose("CloseResponse: %s", close_result)
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.Close),
-                        close=close_result,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case AgentWebSocketEvents.Error:
-                    err_error: ErrorResponse = ErrorResponse.from_json(message)
-                    self._logger.verbose("ErrorResponse: %s", err_error)
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.Error),
-                        error=err_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
-                case _:
-                    self._logger.warning(
-                        "Unknown Message: response_type: %s, data: %s",
-                        response_type,
-                        data,
-                    )
-                    unhandled_error: UnhandledResponse = UnhandledResponse(
-                        type=AgentWebSocketEvents(AgentWebSocketEvents.Unhandled),
-                        raw=message,
-                    )
-                    await self._emit(
-                        AgentWebSocketEvents(AgentWebSocketEvents.Unhandled),
-                        unhandled=unhandled_error,
-                        **dict(cast(Dict[Any, Any], self._kwargs)),
-                    )
+            if response_type == AgentWebSocketEvents.Open:
+                open_result: OpenResponse = OpenResponse.from_json(message)
+                self._logger.verbose("OpenResponse: %s", open_result)
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.Open),
+                    open=open_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.Welcome:
+                welcome_result: WelcomeResponse = WelcomeResponse.from_json(message)
+                self._logger.verbose("WelcomeResponse: %s", welcome_result)
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.Welcome),
+                    welcome=welcome_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.SettingsApplied:
+                settings_applied_result: SettingsAppliedResponse = (
+                    SettingsAppliedResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "SettingsAppliedResponse: %s", settings_applied_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.SettingsApplied),
+                    settings_applied=settings_applied_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.ConversationText:
+                conversation_text_result: ConversationTextResponse = (
+                    ConversationTextResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "ConversationTextResponse: %s", conversation_text_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.ConversationText),
+                    conversation_text=conversation_text_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.UserStartedSpeaking:
+                user_started_speaking_result: UserStartedSpeakingResponse = (
+                    UserStartedSpeakingResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "UserStartedSpeakingResponse: %s", user_started_speaking_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.UserStartedSpeaking),
+                    user_started_speaking=user_started_speaking_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.AgentThinking:
+                agent_thinking_result: AgentThinkingResponse = (
+                    AgentThinkingResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "AgentThinkingResponse: %s", agent_thinking_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.AgentThinking),
+                    agent_thinking=agent_thinking_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.FunctionCallRequest:
+                function_call_request_result: FunctionCallRequest = (
+                    FunctionCallRequest.from_json(message)
+                )
+                self._logger.verbose(
+                    "FunctionCallRequest: %s", function_call_request_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.FunctionCallRequest),
+                    function_call_request=function_call_request_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.AgentStartedSpeaking:
+                agent_started_speaking_result: AgentStartedSpeakingResponse = (
+                    AgentStartedSpeakingResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "AgentStartedSpeakingResponse: %s",
+                    agent_started_speaking_result,
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.AgentStartedSpeaking),
+                    agent_started_speaking=agent_started_speaking_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.AgentAudioDone:
+                agent_audio_done_result: AgentAudioDoneResponse = (
+                    AgentAudioDoneResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "AgentAudioDoneResponse: %s", agent_audio_done_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.AgentAudioDone),
+                    agent_audio_done=agent_audio_done_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.InjectionRefused:
+                injection_refused_result: InjectionRefusedResponse = (
+                    InjectionRefusedResponse.from_json(message)
+                )
+                self._logger.verbose(
+                    "InjectionRefused: %s", injection_refused_result
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.InjectionRefused),
+                    injection_refused=injection_refused_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.Close:
+                close_result: CloseResponse = CloseResponse.from_json(message)
+                self._logger.verbose("CloseResponse: %s", close_result)
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.Close),
+                    close=close_result,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            elif response_type == AgentWebSocketEvents.Error:
+                err_error: ErrorResponse = ErrorResponse.from_json(message)
+                self._logger.verbose("ErrorResponse: %s", err_error)
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.Error),
+                    error=err_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
+            else:
+                self._logger.warning(
+                    "Unknown Message: response_type: %s, data: %s",
+                    response_type,
+                    data,
+                )
+                unhandled_error: UnhandledResponse = UnhandledResponse(
+                    type=AgentWebSocketEvents(AgentWebSocketEvents.Unhandled),
+                    raw=message,
+                )
+                await self._emit(
+                    AgentWebSocketEvents(AgentWebSocketEvents.Unhandled),
+                    unhandled=unhandled_error,
+                    **dict(cast(Dict[Any, Any], self._kwargs)),
+                )
 
             self._logger.notice("_process_text Succeeded")
             self._logger.debug("AsyncAgentWebSocketClient._process_text LEAVE")
